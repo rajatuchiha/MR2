@@ -1,0 +1,274 @@
+bool A,B,C,D;
+long int count = 0;
+int state;
+int statep = 0;
+long int countl = 0;
+int statel;
+int statelp = 0;
+long int countlp = 0;
+long int countp = 0;
+bool s = 0;
+bool f=0;
+char input = '0';
+int degree;
+void setup() 
+{
+  Serial.begin(230400);
+  attachInterrupt(4,Cchange,CHANGE);//interrupt pins for encoder
+  attachInterrupt(5 ,Dchange,CHANGE);
+attachInterrupt(0,Achange,CHANGE);//interrupt pins for encoder
+  attachInterrupt(1,Bchange,CHANGE);
+pinMode(12,OUTPUT);
+analogWrite(12,169);
+//motor1
+pinMode(9,OUTPUT);//dir
+pinMode(10,OUTPUT);//pwm
+pinMode(11,OUTPUT);//brk
+//motor2
+pinMode(14,OUTPUT);//dir
+pinMode(15,OUTPUT);//pwm
+pinMode(16,OUTPUT);//brk
+
+
+}
+
+void loop() 
+{
+/*if(Serial.available())
+{
+input = Serial.read();
+Serial.println(input);
+if (input=='c')
+{
+while (1)
+{
+if(Serial.available())
+{
+degree = Serial.parseInt();
+Serial.println(degree);
+break;
+}
+
+}
+clockwise (degree);
+}
+}*/
+
+  
+  int i = 0;
+  while(i<10)
+  {
+    if((i%2)==0)
+    {
+      
+      while(countp<21000 && countlp<21000){
+    digitalWrite(9,LOW);
+  digitalWrite(10,HIGH);
+  digitalWrite(11,LOW);
+  digitalWrite(14,LOW);
+  digitalWrite(15,HIGH);
+  digitalWrite(16,LOW);
+  }
+   digitalWrite(11,HIGH);
+    digitalWrite(16,HIGH);
+    
+    
+    count = 0;
+    countp =0 ;
+    countl = 0;
+    countlp = 0;
+    statep = 0;
+    statelp = 0;
+    }
+    
+    if((i%2)!=0)
+    {
+      
+      while(countp<21000 && countlp<21000){
+    digitalWrite(9,HIGH);
+  digitalWrite(10,HIGH);
+  digitalWrite(11,LOW);
+  digitalWrite(14,HIGH);
+  digitalWrite(15,HIGH);
+  digitalWrite(16,LOW);
+  }
+   digitalWrite(11,HIGH);
+    digitalWrite(16,HIGH);
+    
+    
+    count = 0;
+    countp =0 ;
+    countl = 0;
+    countlp = 0;
+    statep = 0;
+    statelp = 0;
+    }
+    
+    i++;
+    
+    delay(10000);
+  
+}
+}
+
+void Dchange()
+{
+  D = digitalRead(19);
+  C = digitalRead(18);
+
+  if ((C==HIGH)&&(D==HIGH)) statel = 1;
+  if ((C==HIGH)&&(D==LOW)) statel = 2;
+  if ((C==LOW)&&(D==LOW)) statel = 3;
+  if((C==LOW)&&(D==HIGH)) statel = 4;
+  switch (statel)
+  {
+    case 1:
+    {
+      if (statelp == 2) countl++;
+      if (statelp == 4) countl--;
+      break;
+    }
+    case 2:
+    {
+      if (statelp == 1) countl--;
+      if (statelp == 3) countl++;
+      break;
+    }
+    case 3:
+    {
+      if (statelp == 2) countl --;
+      if (statelp == 4) countl ++;
+      break;
+    }
+    default:
+    {
+      if (statelp == 1) countl++;
+      if (statelp == 3) countl--;
+    }
+  }
+  statelp=statel;
+  countlp=abs(countl);
+ 
+}
+
+
+
+  
+ void Cchange()
+{
+  
+  D = digitalRead(19);
+  C = digitalRead(18);
+
+  if ((C==HIGH)&&(D==HIGH)) statel = 1;
+  if ((C==HIGH)&&(D==LOW)) statel = 2;
+  if ((C==LOW)&&(D==LOW)) statel = 3;
+  if((C==LOW)&&(D==HIGH)) statel = 4;
+  switch (statel)
+  {
+    case 1:
+    {
+      if (statelp == 2) countl++;
+      if (statelp == 4) countl--;
+      break;
+    }
+    case 2:
+    {
+      if (statelp == 1) countl--;
+      if (statelp == 3) countl++;
+      break;
+    }
+    case 3:
+    {
+      if (statelp == 2) countl --;
+      if (statelp == 4) countl ++;
+      break;
+    }
+    default:
+    {
+      if (statelp == 1) countl++;
+      if (statelp == 3) countl--;
+    }
+  }
+  statelp=statel;
+  countlp=abs(countl);
+}
+
+ void Achange()
+{
+  
+  B = digitalRead(2);
+  A = digitalRead(3);
+
+  if ((A==HIGH)&&(B==HIGH)) state = 1;
+  if ((A==HIGH)&&(B==LOW)) state = 2;
+  if ((A==LOW)&&(B==LOW)) state = 3;
+  if((A==LOW)&&(B==HIGH)) state = 4;
+  switch (state)
+  {
+    case 1:
+    {
+      if (statep == 2) count++;
+      if (statep == 4) count--;
+      break;
+    }
+    case 2:
+    {
+      if (statep == 1) count--;
+      if (statep == 3) count++;
+      break;
+    }
+    case 3:
+    {
+      if (statep == 2) count --;
+      if (statep == 4) count ++;
+      break;
+    }
+    default:
+    {
+      if (statep == 1) count++;
+      if (statep == 3) count--;
+    }
+  }
+  statep=state;
+  countp = abs(count);
+  
+}
+void Bchange()
+{
+  B = digitalRead(2);
+  A = digitalRead(3);
+
+  if ((A==HIGH)&&(B==HIGH)) state = 1;
+  if ((A==HIGH)&&(B==LOW)) state = 2;
+  if ((A==LOW)&&(B==LOW)) state = 3;
+  if((A==LOW)&&(B==HIGH)) state = 4;
+  switch (state)
+  {
+    case 1:
+    {
+      if (statep == 2) count++;
+      if (statep == 4) count--;
+      break;
+    }
+    case 2:
+    {
+      if (statep == 1) count--;
+      if (statep == 3) count++;
+      break;
+    }
+    case 3:
+    {
+      if (statep == 2) count --;
+      if (statep == 4) count ++;
+      break;
+    }
+    default:
+    {
+      if (statep == 1) count++;
+      if (statep == 3) count--;
+    }
+  }
+  statep=state;
+ countp = abs(count);
+}
