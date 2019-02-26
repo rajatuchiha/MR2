@@ -1,0 +1,142 @@
+long int count = 0;
+long int countp = 0;
+bool A,B;
+int state;
+int statep = 0;
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(230400);
+  pinMode(2,INPUT);
+  pinMode(3,INPUT);
+  attachInterrupt(0,Achange,CHANGE);
+  attachInterrupt(1,Bchange,CHANGE);
+  pinMode(5,OUTPUT); //dir1
+  pinMode(6,OUTPUT); //pwm1
+  pinMode(7,OUTPUT); //brk1
+  
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+ for(int i =1;;i++)
+  {
+    if((i%2)!=0)
+    {
+      while(countp<4000)
+      {
+        digitalWrite(7,LOW);
+        digitalWrite(5,HIGH);
+        analogWrite(6,100);
+        
+      }
+      digitalWrite(7,HIGH);
+      count = 0;
+      countp = 0;
+      statep = 0;
+      new_delay(2000);
+    }
+    if((i%2)==0)
+    {
+      while(countp<4000)
+      {
+        digitalWrite(7,LOW);
+        digitalWrite(5,LOW);
+        analogWrite(6,100);
+      }
+      digitalWrite(7,HIGH);
+      count = 0;
+      countp = 0;
+      statep = 0;
+      new_delay(2000);
+    }
+  }
+  
+}
+
+ void Achange()
+{
+  
+  B = digitalRead(2);
+  A = digitalRead(3);
+
+  if ((A==HIGH)&&(B==HIGH)) state = 1;
+  if ((A==HIGH)&&(B==LOW)) state = 2;
+  if ((A==LOW)&&(B==LOW)) state = 3;
+  if((A==LOW)&&(B==HIGH)) state = 4;
+  switch (state)
+  {
+    case 1:
+    {
+      if (statep == 2) count++;
+      if (statep == 4) count--;
+      break;
+    }
+    case 2:
+    {
+      if (statep == 1) count--;
+      if (statep == 3) count++;
+      break;
+    }
+    case 3:
+    {
+      if (statep == 2) count --;
+      if (statep == 4) count ++;
+      break;
+    }
+    default:
+    {
+      if (statep == 1) count++;
+      if (statep == 3) count--;
+    }
+  }
+  statep=state;
+  countp = abs(count);
+}
+void Bchange()
+{
+  B = digitalRead(2);
+  A = digitalRead(3);
+
+  if ((A==HIGH)&&(B==HIGH)) state = 1;
+  if ((A==HIGH)&&(B==LOW)) state = 2;
+  if ((A==LOW)&&(B==LOW)) state = 3;
+  if((A==LOW)&&(B==HIGH)) state = 4;
+  switch (state)
+  {
+    case 1:
+    {
+      if (statep == 2) count++;
+      if (statep == 4) count--;
+      break;
+    }
+    case 2:
+    {
+      if (statep == 1) count--;
+      if (statep == 3) count++;
+      break;
+    }
+    case 3:
+    {
+      if (statep == 2) count --;
+      if (statep == 4) count ++;
+      break;
+    }
+    default:
+    {
+      if (statep == 1) count++;
+      if (statep == 3) count--;
+    }
+  }
+  statep=state;
+  countp=abs(count);
+}
+
+void new_delay(int del)
+{
+  long int timi = millis();
+  long int timf = timi;
+  while((timf-timi)<del)
+  {
+    timf = millis();
+  }
+}
