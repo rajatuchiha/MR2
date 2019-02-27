@@ -1,0 +1,267 @@
+long int count = 0;
+long int countp = 0;
+long int countl = 0;
+long int countlp = 0;
+bool A,B,C,D;
+int state;
+int statep = 0;
+int statel;
+int statelp = 0;
+void setup() {
+  // put your setup code here, to run once:
+Serial.begin(230400);
+  pinMode(2,INPUT);
+  pinMode(3,INPUT);
+  pinMode(18,INPUT);
+  pinMode(19,INPUT);
+  pinMode(14,OUTPUT);
+  analogWrite(14,169);
+  attachInterrupt(0,Achange,CHANGE);
+  attachInterrupt(1,Bchange,CHANGE);
+  attachInterrupt(4,Cchange,CHANGE);
+  attachInterrupt(5,Dchange,CHANGE);
+  pinMode(5,OUTPUT); //dir1
+  pinMode(6,OUTPUT); //pwm1
+  pinMode(7,OUTPUT); //brk1
+
+  pinMode(8,OUTPUT); //dir2
+  pinMode(9,OUTPUT); //pwm2
+  pinMode(10,OUTPUT); //brk2
+  
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
+ for(int i =1;;i++)
+  {
+    if((i%2)!=0)
+    {
+      while((countp<1000) && (countlp<1000))
+      {
+        digitalWrite(7,LOW);
+        digitalWrite(5,HIGH);
+        digitalWrite(6,HIGH);
+        digitalWrite(10,LOW);
+        digitalWrite(8,HIGH);
+        digitalWrite(9,HIGH);
+        
+      }
+      digitalWrite(7,HIGH);
+      digitalWrite(6,LOW);
+      digitalWrite(10,HIGH);
+      digitalWrite(9,LOW);
+      Serial.print(countp);
+      Serial.print(" ");
+      Serial.println(countlp);
+      count = 0;
+      countp = 0;
+      statep = 0;
+      countl = 0;
+      countlp = 0;
+      statelp = 0;
+      new_delay(2000);
+      
+    }
+    if((i%2)==0)
+    {
+      while(countp<1000)
+      {
+        digitalWrite(7,LOW);
+        digitalWrite(5,LOW);
+        digitalWrite(6,HIGH);
+        digitalWrite(10,LOW);
+        digitalWrite(8,LOW);
+        digitalWrite(9,HIGH);
+      }
+      digitalWrite(7,HIGH);
+      digitalWrite(6,LOW);
+      digitalWrite(10,HIGH);
+      digitalWrite(9,LOW);
+      Serial.print(countp);
+      Serial.print(" ");
+      Serial.println(countlp);
+      count = 0;
+      countp = 0;
+      statep = 0;
+      countl = 0;
+      countlp = 0;
+      statelp = 0;
+      new_delay(2000);
+      
+    }
+  }
+  
+}
+
+ void Achange()
+{
+  
+  B = digitalRead(2);
+  A = digitalRead(3);
+
+  if ((A==HIGH)&&(B==HIGH)) state = 1;
+  if ((A==HIGH)&&(B==LOW)) state = 2;
+  if ((A==LOW)&&(B==LOW)) state = 3;
+  if((A==LOW)&&(B==HIGH)) state = 4;
+  switch (state)
+  {
+    case 1:
+    {
+      if (statep == 2) count++;
+      if (statep == 4) count--;
+      break;
+    }
+    case 2:
+    {
+      if (statep == 1) count--;
+      if (statep == 3) count++;
+      break;
+    }
+    case 3:
+    {
+      if (statep == 2) count --;
+      if (statep == 4) count ++;
+      break;
+    }
+    default:
+    {
+      if (statep == 1) count++;
+      if (statep == 3) count--;
+    }
+  }
+  statep=state;
+  countp = abs(count);
+}
+void Bchange()
+{
+  B = digitalRead(2);
+  A = digitalRead(3);
+
+  if ((A==HIGH)&&(B==HIGH)) state = 1;
+  if ((A==HIGH)&&(B==LOW)) state = 2;
+  if ((A==LOW)&&(B==LOW)) state = 3;
+  if((A==LOW)&&(B==HIGH)) state = 4;
+  switch (state)
+  {
+    case 1:
+    {
+      if (statep == 2) count++;
+      if (statep == 4) count--;
+      break;
+    }
+    case 2:
+    {
+      if (statep == 1) count--;
+      if (statep == 3) count++;
+      break;
+    }
+    case 3:
+    {
+      if (statep == 2) count --;
+      if (statep == 4) count ++;
+      break;
+    }
+    default:
+    {
+      if (statep == 1) count++;
+      if (statep == 3) count--;
+    }
+  }
+  statep=state;
+  countp=abs(count);
+}
+
+
+void Dchange()
+{
+  D = digitalRead(19);
+  C = digitalRead(18);
+
+  if ((C==HIGH)&&(D==HIGH)) statel = 1;
+  if ((C==HIGH)&&(D==LOW)) statel = 2;
+  if ((C==LOW)&&(D==LOW)) statel = 3;
+  if((C==LOW)&&(D==HIGH)) statel = 4;
+  switch (statel)
+  {
+    case 1:
+    {
+      if (statelp == 2) countl++;
+      if (statelp == 4) countl--;
+      break;
+    }
+    case 2:
+    {
+      if (statelp == 1) countl--;
+      if (statelp == 3) countl++;
+      break;
+    }
+    case 3:
+    {
+      if (statelp == 2) countl --;
+      if (statelp == 4) countl ++;
+      break;
+    }
+    default:
+    {
+      if (statelp == 1) countl++;
+      if (statelp == 3) countl--;
+    }
+  }
+  statelp=statel;
+  countlp=abs(countl);
+ 
+}
+
+
+
+  
+ void Cchange()
+{
+  
+  D = digitalRead(19);
+  C = digitalRead(18);
+
+  if ((C==HIGH)&&(D==HIGH)) statel = 1;
+  if ((C==HIGH)&&(D==LOW)) statel = 2;
+  if ((C==LOW)&&(D==LOW)) statel = 3;
+  if((C==LOW)&&(D==HIGH)) statel = 4;
+  switch (statel)
+  {
+    case 1:
+    {
+      if (statelp == 2) countl++;
+      if (statelp == 4) countl--;
+      break;
+    }
+    case 2:
+    {
+      if (statelp == 1) countl--;
+      if (statelp == 3) countl++;
+      break;
+    }
+    case 3:
+    {
+      if (statelp == 2) countl --;
+      if (statelp == 4) countl ++;
+      break;
+    }
+    default:
+    {
+      if (statelp == 1) countl++;
+      if (statelp == 3) countl--;
+    }
+  }
+  statelp=statel;
+  countlp=abs(countl);
+}
+
+
+void new_delay(int del)
+{
+  long int timi = millis();
+  long int timf = timi;
+  while((timf-timi)<del)
+  {
+    timf = millis();
+  }
+}
